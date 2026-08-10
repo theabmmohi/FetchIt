@@ -116,6 +116,7 @@ interface FetchItResult {
   cookies: string[]
   body: string
   bodyTruncated: boolean
+  [key: string]: unknown
 }
 
 async function fetchIt({ url, method = "GET", headers = {}, body }: FetchItArgs): Promise<FetchItResult> {
@@ -193,13 +194,13 @@ function createMcpServer(): McpServer {
       inputSchema: {
         url: z.string().url().describe("Full URL to request, e.g. https://api.example.com/users"),
         method: z.string().optional().describe("HTTP method (default: GET)"),
-        headers: z.record(z.string()).optional().describe("Request headers as key/value pairs"),
+        headers: z.record(z.string(), z.string()).optional().describe("Request headers as key/value pairs"),
         body: z.string().optional().describe("Raw request body (for POST/PUT/PATCH etc.)"),
       },
       outputSchema: {
         status: z.number(),
         statusText: z.string(),
-        headers: z.record(z.string()),
+        headers: z.record(z.string(), z.string()),
         cookies: z.array(z.string()),
         body: z.string(),
         bodyTruncated: z.boolean(),
